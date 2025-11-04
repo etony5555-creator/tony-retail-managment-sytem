@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import useMockData from '../hooks/useMockData';
-import type { AppContextType, Customer, StockItem, Transaction, Wholesaler, BodaDriver, BorrowRecord, Task } from '../types';
+import type { AppContextType, Customer, StockItem, Transaction, Wholesaler, BodaDriver, BorrowRecord, Task, TaskStatus } from '../types';
 
 export const AppContext = createContext<AppContextType | null>(null);
 
@@ -39,12 +39,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setCustomers(prev => [...prev, newCustomer]);
   };
 
+  const updateCustomer = (updatedCustomer: Customer) => {
+    setCustomers(prev => prev.map(c => c.id === updatedCustomer.id ? updatedCustomer : c));
+  };
+
   const addStockItem = (itemData: Omit<StockItem, 'id'>) => {
     const newItem: StockItem = {
       id: Math.max(...stock.map(s => s.id), 0) + 1,
       ...itemData,
     };
     setStock(prev => [...prev, newItem]);
+  };
+
+  const updateStockItem = (updatedItem: StockItem) => {
+    setStock(prev => prev.map(s => s.id === updatedItem.id ? updatedItem : s));
   };
 
   const addTransaction = (transactionData: Omit<Transaction, 'id'>) => {
@@ -63,6 +71,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setWholesalers(prev => [...prev, newWholesaler]);
   };
 
+  const updateWholesaler = (updatedWholesaler: Wholesaler) => {
+    setWholesalers(prev => prev.map(w => w.id === updatedWholesaler.id ? updatedWholesaler : w));
+  };
+
   const addBodaDriver = (driverData: Omit<BodaDriver, 'id' | 'available'>) => {
     const newDriver: BodaDriver = {
       id: Math.max(...bodaDrivers.map(d => d.id), 0) + 1,
@@ -72,28 +84,37 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setBodaDrivers(prev => [...prev, newDriver]);
   };
   
-  const addBorrow = (borrowData: Omit<BorrowRecord, 'id' | 'status'>) => {
+  const updateBodaDriver = (updatedDriver: BodaDriver) => {
+    setBodaDrivers(prev => prev.map(d => d.id === updatedDriver.id ? updatedDriver : d));
+  };
+
+  const addBorrow = (borrowData: Omit<BorrowRecord, 'id' | 'amountPaid' | 'status'>) => {
     const newBorrow: BorrowRecord = {
       id: Math.max(...borrows.map(b => b.id), 0) + 1,
       ...borrowData,
+      amountPaid: 0,
       status: 'Unpaid',
     };
     setBorrows(prev => [...prev, newBorrow]);
   };
 
-  const addTask = (taskData: Omit<Task, 'id' | 'completed'>) => {
+  const updateBorrow = (updatedBorrow: BorrowRecord) => {
+    setBorrows(prev => prev.map(b => b.id === updatedBorrow.id ? updatedBorrow : b));
+  };
+
+  const addTask = (taskData: Omit<Task, 'id' | 'status'>) => {
     const newTask: Task = {
       id: Math.max(...tasks.map(t => t.id), 0) + 1,
       ...taskData,
-      completed: false,
+      status: 'Pending',
     };
     setTasks(prev => [...prev, newTask]);
   };
 
-  const toggleTask = (taskId: number) => {
+  const updateTaskStatus = (taskId: number, status: TaskStatus) => {
     setTasks(prev =>
       prev.map(task =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
+        task.id === taskId ? { ...task, status } : task
       )
     );
   };
@@ -112,13 +133,18 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     logo,
     darkMode,
     addCustomer,
+    updateCustomer,
     addStockItem,
+    updateStockItem,
     addTransaction,
     addWholesaler,
+    updateWholesaler,
     addBodaDriver,
+    updateBodaDriver,
     addBorrow,
+    updateBorrow,
     addTask,
-    toggleTask,
+    updateTaskStatus,
     setShopName,
     setLogo,
     toggleDarkMode,

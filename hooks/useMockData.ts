@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import type { Customer, StockItem, Transaction, Task, Wholesaler, BodaDriver, BorrowRecord } from '../types';
 import { TransactionType } from '../types';
@@ -26,9 +27,9 @@ const useMockData = () => {
   ]);
 
   const [tasks] = useState<Task[]>([
-    { id: 1, title: 'Call wholesaler for sugar restock', completed: false, dueDate: '2024-07-25' },
-    { id: 2, title: 'Follow up with tedd on debt', completed: false, dueDate: '2024-07-24' },
-    { id: 3, title: 'Monthly profit report', completed: true, dueDate: '2024-07-05' },
+    { id: 1, title: 'Call wholesaler for sugar restock', status: 'In Progress', dueDate: '2024-07-25' },
+    { id: 2, title: 'Follow up with tedd on debt', status: 'Pending', dueDate: '2024-07-24' },
+    { id: 3, title: 'Monthly profit report', status: 'Completed', dueDate: '2024-07-05' },
   ]);
 
   const [wholesalers] = useState<Wholesaler[]>([
@@ -42,9 +43,9 @@ const useMockData = () => {
   ]);
 
   const [borrows] = useState<BorrowRecord[]>([
-    { id: 1, lender: 'Kampala General Supplies', amount: 500000, date: '2024-07-10', dueDate: '2024-08-10', status: 'Unpaid' },
-    { id: 2, lender: 'Equity Bank', amount: 2000000, date: '2024-06-01', dueDate: '2024-12-01', status: 'Unpaid' },
-    { id: 3, lender: 'Bakers Choice Ltd', amount: 250000, date: '2024-07-15', dueDate: '2024-07-25', status: 'Paid' },
+    { id: 1, lender: 'Kampala General Supplies', amount: 500000, amountPaid: 100000, date: '2024-07-10', dueDate: '2024-08-10', status: 'Partially Paid' },
+    { id: 2, lender: 'Equity Bank', amount: 2000000, amountPaid: 0, date: '2024-06-01', dueDate: '2024-12-01', status: 'Unpaid' },
+    { id: 3, lender: 'Bakers Choice Ltd', amount: 250000, amountPaid: 250000, date: '2024-07-15', dueDate: '2024-07-25', status: 'Paid' },
   ]);
   
   return { customers, stock, transactions, tasks, wholesalers, bodaDrivers, borrows };

@@ -1,3 +1,6 @@
+
+
+// FIX: Removed circular self-import of 'Page' to resolve conflicting declaration errors.
 export enum Page {
   Home = 'Dashboard',
   Customers = 'Customers',
@@ -14,6 +17,9 @@ export enum TransactionType {
   INCOME = 'Income',
   EXPENSE = 'Expense',
 }
+
+export type TaskStatus = 'Pending' | 'In Progress' | 'Completed';
+export type BorrowStatus = 'Unpaid' | 'Partially Paid' | 'Paid';
 
 export interface Customer {
   id: number;
@@ -41,7 +47,7 @@ export interface Transaction {
 export interface Task {
   id: number;
   title: string;
-  completed: boolean;
+  status: TaskStatus;
   dueDate: string;
 }
 
@@ -59,18 +65,14 @@ export interface BodaDriver {
   available: boolean;
 }
 
-export interface BusinessInsight {
-  title: string;
-  suggestion: string;
-}
-
 export interface BorrowRecord {
   id: number;
   lender: string;
   amount: number;
+  amountPaid: number;
   date: string;
   dueDate: string;
-  status: 'Paid' | 'Unpaid';
+  status: BorrowStatus;
 }
 
 
@@ -86,13 +88,18 @@ export interface AppContextType {
   logo: string | null;
   darkMode: boolean;
   addCustomer: (customer: Omit<Customer, 'id' | 'debt' | 'lastSeen'>) => void;
+  updateCustomer: (customer: Customer) => void;
   addStockItem: (item: Omit<StockItem, 'id'>) => void;
+  updateStockItem: (item: StockItem) => void;
   addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
   addWholesaler: (wholesaler: Omit<Wholesaler, 'id'>) => void;
+  updateWholesaler: (wholesaler: Wholesaler) => void;
   addBodaDriver: (driver: Omit<BodaDriver, 'id' | 'available'>) => void;
-  addBorrow: (borrow: Omit<BorrowRecord, 'id' | 'status'>) => void;
-  addTask: (task: Omit<Task, 'id' | 'completed'>) => void;
-  toggleTask: (taskId: number) => void;
+  updateBodaDriver: (driver: BodaDriver) => void;
+  addBorrow: (borrow: Omit<BorrowRecord, 'id' | 'amountPaid' | 'status'>) => void;
+  updateBorrow: (borrow: BorrowRecord) => void;
+  addTask: (task: Omit<Task, 'id' | 'status'>) => void;
+  updateTaskStatus: (taskId: number, status: TaskStatus) => void;
   setShopName: (name: string) => void;
   setLogo: (logo: string | null) => void;
   toggleDarkMode: () => void;

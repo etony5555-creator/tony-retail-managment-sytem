@@ -1,14 +1,21 @@
+
 import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
-import type { AppContextType, Task } from '../types';
+import type { AppContextType, Task, TaskStatus } from '../types';
 import Card from './common/Card';
 import Button from './common/Button';
 import Modal from './common/Modal';
 
+const statusStyles: Record<TaskStatus, string> = {
+    Pending: 'bg-yellow-200/70 text-yellow-800',
+    'In Progress': 'bg-blue-200/70 text-blue-800',
+    Completed: 'bg-green-200/70 text-green-800',
+};
+
 const Tasks: React.FC = () => {
-    const { tasks, addTask, toggleTask } = useContext(AppContext) as AppContextType;
+    const { tasks, addTask, updateTaskStatus } = useContext(AppContext) as AppContextType;
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newItem, setNewItem] = useState<Omit<Task, 'id' | 'completed'>>({
+    const [newItem, setNewItem] = useState<Omit<Task, 'id' | 'status'>>({
         title: '',
         dueDate: new Date().toISOString().split('T')[0],
     });
@@ -37,27 +44,21 @@ const Tasks: React.FC = () => {
                 <ul className="space-y-3">
                     {tasks.map(task => (
                         <li key={task.id} className="flex items-center justify-between p-3 bg-dark-bg/50 rounded-lg">
-                            <div className="flex items-center space-x-3">
-                                <input
-                                    type="checkbox"
-                                    checked={task.completed}
-                                    onChange={() => toggleTask(task.id)}
-                                    className="h-5 w-5 rounded bg-dark-border border-gray-500 text-glow-cyan focus:ring-glow-cyan cursor-pointer"
-                                />
-                                <div>
-                                    <p className={`text-white ${task.completed ? 'line-through text-gray-500' : ''}`}>
-                                        {task.title}
-                                    </p>
-                                    <p className="text-xs text-gray-400">Due: {task.dueDate}</p>
-                                </div>
+                            <div>
+                                <p className={`text-white ${task.status === 'Completed' ? 'line-through text-gray-500' : ''}`}>
+                                    {task.title}
+                                </p>
+                                <p className="text-xs text-gray-400">Due: {task.dueDate}</p>
                             </div>
-                            <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                task.completed
-                                ? 'bg-green-200/70 text-green-800'
-                                : 'bg-yellow-200/70 text-yellow-800'
-                            }`}>
-                                {task.completed ? 'Completed' : 'Pending'}
-                            </span>
+                            <select
+                                value={task.status}
+                                onChange={(e) => updateTaskStatus(task.id, e.target.value as TaskStatus)}
+                                className={`text-xs font-semibold rounded-full px-2 py-1 border-0 outline-none appearance-none cursor-pointer ${statusStyles[task.status]}`}
+                            >
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
                         </li>
                     ))}
                 </ul>

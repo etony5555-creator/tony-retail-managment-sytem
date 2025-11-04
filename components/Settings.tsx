@@ -1,5 +1,4 @@
-
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import type { AppContextType } from '../types';
 import Card from './common/Card';
@@ -8,6 +7,22 @@ import LogoUploader from './common/LogoUploader';
 
 const Settings: React.FC = () => {
   const { shopName, setShopName } = useContext(AppContext) as AppContextType;
+  const [saveStatus, setSaveStatus] = useState('');
+
+  // FIX: Refactored to correctly handle timeout and cleanup,
+  // which also resolves the 'NodeJS.Timeout' type error in a browser environment
+  // and prevents a potential runtime error from using an uninitialized variable.
+  useEffect(() => {
+    if (saveStatus) {
+      const timer = setTimeout(() => setSaveStatus(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveStatus]);
+
+  const handleSave = () => {
+    // In a real app, this would be an API call. Here we just show feedback.
+    setSaveStatus('Settings saved successfully!');
+  };
 
   return (
     <div className="space-y-6 animate-fade-in max-w-2xl mx-auto">
@@ -52,8 +67,9 @@ const Settings: React.FC = () => {
         </div>
       </Card>
 
-      <div className="flex justify-end">
-          <Button>Save Settings</Button>
+      <div className="flex justify-end items-center gap-4">
+          {saveStatus && <p className="text-green-400 text-sm animate-fade-in">{saveStatus}</p>}
+          <Button onClick={handleSave}>Save Settings</Button>
       </div>
     </div>
   );

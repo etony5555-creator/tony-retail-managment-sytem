@@ -6,7 +6,7 @@ import Button from './common/Button';
 import Modal from './common/Modal';
 
 const BodaDrivers: React.FC = () => {
-  const { bodaDrivers, addBodaDriver } = useContext(AppContext) as AppContextType;
+  const { bodaDrivers, addBodaDriver, updateBodaDriver } = useContext(AppContext) as AppContextType;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newItem, setNewItem] = useState<Omit<BodaDriver, 'id' | 'available'>>({
     name: '',
@@ -27,6 +27,18 @@ const BodaDrivers: React.FC = () => {
     }
   };
 
+  const EmptyState = () => (
+    <tr>
+        <td colSpan={4} className="text-center p-8 text-gray-500">
+            <div className="flex flex-col items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2 2h8a1 1 0 001-1z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 16h2a1 1 0 001-1V7a1 1 0 00-1-1h-2" /></svg>
+                <span>No Boda Boda drivers added yet.</span>
+            </div>
+        </td>
+    </tr>
+  );
+
+
   return (
     <>
       <Card className="animate-fade-in">
@@ -45,28 +57,29 @@ const BodaDrivers: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {bodaDrivers.map(driver => (
+              {bodaDrivers.length > 0 ? bodaDrivers.map(driver => (
                 <tr key={driver.id} className="border-b border-dark-border hover:bg-dark-border/50 transition-colors">
                   <td className="p-3 font-medium text-white">{driver.name}</td>
                   <td className="p-3 font-mono">{driver.phone}</td>
                   <td className="p-3">
-                    {driver.available ? (
-                      <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200/70">
-                        Available
-                      </span>
-                    ) : (
-                      <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-yellow-600 bg-yellow-200/70">
-                        On Trip
-                      </span>
-                    )}
+                    <button 
+                      onClick={() => updateBodaDriver({ ...driver, available: !driver.available })}
+                      className={`text-xs font-semibold w-24 text-center py-1 px-2 uppercase rounded-full transition-colors ${
+                        driver.available 
+                        ? 'text-green-100 bg-green-600/70 hover:bg-green-500/70' 
+                        : 'text-yellow-100 bg-yellow-500/70 hover:bg-yellow-400/70'
+                      }`}
+                    >
+                        {driver.available ? 'Available' : 'On Trip'}
+                    </button>
                   </td>
                   <td className="p-3">
-                    <Button variant="secondary" className="text-xs py-1 px-2">
+                    <Button as="a" href={`tel:${driver.phone}`} variant="secondary" className="text-xs py-1 px-2">
                       Call
                     </Button>
                   </td>
                 </tr>
-              ))}
+              )) : <EmptyState />}
             </tbody>
           </table>
         </div>

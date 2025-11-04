@@ -1,54 +1,67 @@
-
+// Fix: Implement the useMockData hook to provide initial data.
 import { useState } from 'react';
-import type { Customer, StockItem, Transaction, Task, Wholesaler, BodaDriver, BorrowRecord } from '../types';
-import { TransactionType } from '../types';
+import { Customer, StockItem, Transaction, TransactionType, BorrowRecord, Wholesaler, BodaDriver, Task } from '../types';
 
-const useMockData = () => {
-  const [customers] = useState<Customer[]>([
-    { id: 1, name: 'der', debt: 70.00, lastSeen: '2024-07-20' },
-    { id: 2, name: 'tedd', debt: 40.00, lastSeen: '2024-07-21' },
-    { id: 3, name: 'Alice', debt: 0, lastSeen: '2024-07-22' },
-    { id: 4, name: 'Bob', debt: 150.50, lastSeen: '2024-07-18' },
-  ]);
+const generateId = () => `id_${new Date().getTime()}_${Math.random().toString(36).substr(2, 9)}`;
 
-  const [stock] = useState<StockItem[]>([
-    { id: 1, name: 'Sugar', quantity: 50, price: 5000, lowStockThreshold: 20 },
-    { id: 2, name: 'Soap', quantity: 15, price: 3000, lowStockThreshold: 10 },
-    { id: 3, name: 'Bread', quantity: 30, price: 6000, lowStockThreshold: 15 },
-    { id: 4, name: 'Cooking Oil', quantity: 25, price: 8000, lowStockThreshold: 10 },
-  ]);
+const initialCustomers: Customer[] = [
+  { id: generateId(), name: 'John Doe', phone: '0771234567', creditLimit: 500000, creditUsed: 150000 },
+  { id: generateId(), name: 'Jane Smith', phone: '0781234567', creditLimit: 1000000, creditUsed: 800000 },
+  { id: generateId(), name: 'Peter Jones', phone: '0751234567', creditLimit: 200000, creditUsed: 0 },
+];
 
-  const [transactions] = useState<Transaction[]>([
-    { id: 1, description: 'Sale of Sugar', amount: 50000, type: TransactionType.INCOME, date: '2024-07-22' },
-    { id: 2, description: 'Restock Soap', amount: 30000, type: TransactionType.EXPENSE, date: '2024-07-21' },
-    { id: 3, description: 'Daily Sales', amount: 450000, type: TransactionType.INCOME, date: '2024-07-22' },
-    { id: 4, description: 'Rent', amount: 200000, type: TransactionType.EXPENSE, date: '2024-07-01' },
-    { id: 5, description: 'Utility Bill', amount: 75000, type: TransactionType.EXPENSE, date: '2024-07-15' },
-  ]);
+const initialStock: StockItem[] = [
+  { id: generateId(), name: 'Sugar', quantity: 50, price: 4000, lowStockThreshold: 10 },
+  { id: generateId(), name: 'Soap', quantity: 100, price: 2500, lowStockThreshold: 20 },
+  { id: generateId(), name: 'Cooking Oil', quantity: 5, price: 8000, lowStockThreshold: 5 },
+  { id: generateId(), name: 'Rice', quantity: 25, price: 5000, lowStockThreshold: 10 },
+];
 
-  const [tasks] = useState<Task[]>([
-    { id: 1, title: 'Call wholesaler for sugar restock', status: 'In Progress', dueDate: '2024-07-25' },
-    { id: 2, title: 'Follow up with tedd on debt', status: 'Pending', dueDate: '2024-07-24' },
-    { id: 3, title: 'Monthly profit report', status: 'Completed', dueDate: '2024-07-05' },
-  ]);
+const initialTransactions: Transaction[] = [
+  { id: generateId(), description: 'Stock purchase', amount: 200000, date: '2023-10-25', type: TransactionType.EXPENSE },
+  { id: generateId(), description: 'Daily sales', amount: 350000, date: '2023-10-25', type: TransactionType.INCOME },
+  { id: generateId(), description: 'Rent payment', amount: 500000, date: '2023-10-24', type: TransactionType.EXPENSE },
+  { id: generateId(), description: 'Customer payment', amount: 100000, date: '2023-10-23', type: TransactionType.INCOME },
+];
 
-  const [wholesalers] = useState<Wholesaler[]>([
-    { id: 1, name: 'Kampala General Supplies', contact: '077-123-4567', productCategory: 'Groceries' },
-    { id: 2, name: 'Bakers Choice Ltd', contact: '078-765-4321', productCategory: 'Bakery' },
-  ]);
+const initialBorrows: BorrowRecord[] = [
+    { id: generateId(), lender: 'Family Friend', amount: 1000000, amountPaid: 250000, date: '2023-09-01', dueDate: '2024-03-01', status: 'Partially Paid' },
+    { id: generateId(), lender: 'Bank Loan', amount: 5000000, amountPaid: 5000000, date: '2023-01-15', dueDate: '2023-07-15', status: 'Paid' },
+];
 
-  const [bodaDrivers] = useState<BodaDriver[]>([
-    { id: 1, name: 'James', phone: '075-111-2222', available: true },
-    { id: 2, name: 'Peter', phone: '079-333-4444', available: false },
-  ]);
+const initialWholesalers: Wholesaler[] = [
+    { id: generateId(), name: 'Kampala General Supplies', contact: '0701234567', productCategory: 'Groceries' },
+    { id: generateId(), name: 'Mukwano Industries', contact: '0711234567', productCategory: 'Soap & Oil' },
+];
 
-  const [borrows] = useState<BorrowRecord[]>([
-    { id: 1, lender: 'Kampala General Supplies', amount: 500000, amountPaid: 100000, date: '2024-07-10', dueDate: '2024-08-10', status: 'Partially Paid' },
-    { id: 2, lender: 'Equity Bank', amount: 2000000, amountPaid: 0, date: '2024-06-01', dueDate: '2024-12-01', status: 'Unpaid' },
-    { id: 3, lender: 'Bakers Choice Ltd', amount: 250000, amountPaid: 250000, date: '2024-07-15', dueDate: '2024-07-25', status: 'Paid' },
-  ]);
-  
-  return { customers, stock, transactions, tasks, wholesalers, bodaDrivers, borrows };
+const initialBodaDrivers: BodaDriver[] = [
+    { id: generateId(), name: 'Musoke', phone: '0791234567', available: true },
+    { id: generateId(), name: 'Okello', phone: '0761234567', available: false },
+];
+
+const initialTasks: Task[] = [
+    { id: generateId(), title: 'Restock sugar', dueDate: '2023-10-28', status: 'Pending' },
+    { id: generateId(), title: 'Pay electricity bill', dueDate: '2023-10-30', status: 'In Progress' },
+    { id: generateId(), title: 'Follow up with Jane Smith', dueDate: '2023-10-26', status: 'Completed' },
+];
+
+export const useMockData = () => {
+    const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
+    const [stock, setStock] = useState<StockItem[]>(initialStock);
+    const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+    const [borrows, setBorrows] = useState<BorrowRecord[]>(initialBorrows);
+    const [wholesalers, setWholesalers] = useState<Wholesaler[]>(initialWholesalers);
+    const [bodaDrivers, setBodaDrivers] = useState<BodaDriver[]>(initialBodaDrivers);
+    const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+    // Functions to modify data will be in AppContext, this hook just provides the state.
+    return {
+        customers, setCustomers,
+        stock, setStock,
+        transactions, setTransactions,
+        borrows, setBorrows,
+        wholesalers, setWholesalers,
+        bodaDrivers, setBodaDrivers,
+        tasks, setTasks
+    };
 };
-
-export default useMockData;

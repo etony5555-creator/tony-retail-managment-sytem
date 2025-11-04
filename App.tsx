@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import Customers from './components/Customers';
@@ -10,11 +10,51 @@ import Borrow from './components/Borrow';
 import Wholesalers from './components/Wholesalers';
 import BodaDrivers from './components/BodaDrivers';
 import Tasks from './components/Tasks';
-import { Page } from './types';
+import { Page, type AppContextType } from './types';
+import { AppContext } from './context/AppContext';
 
 const App: React.FC = () => {
   const [activePage, setActivePage] = useState<Page>(Page.Home);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const context = useContext(AppContext);
+
+  // Notification Effect
+  useEffect(() => {
+    if (!context) return;
+    const { tasks, markReminderAsSent } = context as AppContextType;
+
+    // Request notification permission when the app loads
+    if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+      Notification.requestPermission();
+    }
+
+    const checkReminders = () => {
+      if (Notification.permission !== 'granted') return;
+
+      const now = new Date();
+      tasks.forEach(task => {
+        if (
+          task.status !== 'Completed' &&
+          task.reminderTime &&
+          !task.reminderSent
+        ) {
+          const reminderDateTime = new Date(`${task.dueDate}T${task.reminderTime}:00`);
+          
+          if (reminderDateTime <= now) {
+            new Notification('Task Reminder', {
+              body: `Don't forget: "${task.title}" is due!`,
+            });
+            markReminderAsSent(task.id);
+          }
+        }
+      });
+    };
+
+    // Check for reminders every 30 seconds
+    const intervalId = setInterval(checkReminders, 30000);
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [context]);
 
   const renderPage = () => {
     switch (activePage) {

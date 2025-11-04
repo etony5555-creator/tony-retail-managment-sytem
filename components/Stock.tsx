@@ -23,8 +23,12 @@ const Stock: React.FC = () => {
 
     const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (name !== 'name' && value && !/^\d*$/.test(value)) return;
-        setFormState(prev => ({ ...prev, [name]: value }));
+        if (name !== 'name') {
+            const numericValue = value.replace(/\D/g, '');
+            setFormState(prev => ({ ...prev, [name]: numericValue }));
+        } else {
+            setFormState(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleAddItem = (e: React.FormEvent) => {

@@ -34,16 +34,24 @@ const Borrow: React.FC = () => {
 
     const handleAddFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (name === 'amount' && value && !/^\d*$/.test(value)) return;
-        setAddForm(prev => ({ ...prev, [name]: value }));
+        if (name === 'amount') {
+            const numericValue = value.replace(/\D/g, '');
+            setAddForm(prev => ({ ...prev, [name]: numericValue }));
+        } else {
+            setAddForm(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         if (editForm) {
             const { name, value } = e.target;
             const isNumeric = name === 'amount' || name === 'amountPaid';
-            if (isNumeric && value && !/^\d*$/.test(value)) return;
-            setEditForm(prev => ({ ...prev!, [name]: value }));
+            if (isNumeric) {
+                const numericValue = value.replace(/\D/g, '');
+                setEditForm(prev => ({ ...prev!, [name]: numericValue }));
+            } else {
+                setEditForm(prev => ({ ...prev!, [name]: value }));
+            }
         }
     };
 

@@ -1,112 +1,92 @@
-import React, { useContext, useMemo } from 'react';
+// Fix: Create the Dashboard component.
+import React, { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
-import type { AppContextType, Page } from '../types';
-import Card from './common/Card';
+// FIX: The 'Page' enum is used as a value, so it must be imported as such, not as a type.
+import { Page, type AppContextType } from '../types';
 import MetricCard from './common/MetricCard';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import Card from './common/Card';
+import Button from './common/Button';
 
+// Icons for metrics
+const TrendingUpIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>;
+const TrendingDownIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>;
+const CashIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>;
+const ArchiveIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>;
+const UsersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197m0 0A5.978 5.978 0 0112 13a5.979 5.979 0 012.121.303m-2.121-.303a4 4 0 100-5.292m0 5.292a4 4 0 010-5.292" /></svg>;
+const ExclamationCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
 
-// Icons
-const CurrencyDollarIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v.01" /></svg>;
-const ExclamationCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
-const UserGroupIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.28-1.254-.738-1.666M7 15a4 4 0 100-8 4 4 0 000 8z" /></svg>;
-const ClipboardListIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>;
 
 interface DashboardProps {
-  setActivePage: (page: Page) => void;
+    setActivePage: (page: Page) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ setActivePage }) => {
-  const { customers, transactions, tasks } = useContext(AppContext) as AppContextType;
+    const { 
+        totalRevenue, 
+        totalExpenses, 
+        netProfit, 
+        totalStockValue, 
+        totalDebt, 
+        totalCreditExtended,
+        stock,
+        tasks
+    } = useContext(AppContext) as AppContextType;
 
-  const stats = useMemo(() => {
-    const totalIncome = transactions.filter(t => t.type === 'Income').reduce((sum, t) => sum + t.amount, 0);
-    const totalExpense = transactions.filter(t => t.type === 'Expense').reduce((sum, t) => sum + t.amount, 0);
-    const profit = totalIncome - totalExpense;
-    const pendingDebt = customers.reduce((sum, c) => sum + c.debt, 0);
-    const customersWithDebt = customers.filter(c => c.debt > 0);
-    return { profit, pendingDebt, customersWithDebt };
-  }, [customers, transactions]);
-  
-  const chartData = useMemo(() => {
-    const monthlyData: { [key: string]: number } = {};
-    transactions.forEach(t => {
-      const month = new Date(t.date).toLocaleString('default', { month: 'short' });
-      if (!monthlyData[month]) monthlyData[month] = 0;
-      monthlyData[month] += t.type === 'Income' ? t.amount : -t.amount;
-    });
+    const lowStockItems = stock.filter(item => item.quantity <= item.lowStockThreshold);
+    const pendingTasks = tasks.filter(task => task.status !== 'Completed');
 
-    return Object.entries(monthlyData)
-      .map(([name, profit]) => ({ name, profit }))
-      .reverse(); // simple sort for demo
-  }, [transactions]);
-
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <MetricCard title="Monthly Profit/Loss" value={stats.profit} icon={<CurrencyDollarIcon />} currency="UGX" />
-        <MetricCard title="Pending Debt" value={stats.pendingDebt} icon={<ExclamationCircleIcon />} currency="UGX" />
-        <MetricCard title="Customers with Debt" value={stats.customersWithDebt.length} icon={<UserGroupIcon />} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-            <h2 className="font-bold text-lg mb-4 text-white">Shop Growth (Profit)</h2>
-            <div style={{ width: '100%', height: 300 }}>
-                <ResponsiveContainer>
-                    <AreaChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                        <defs>
-                          <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#00A9FF" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#00A9FF" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#30363D" />
-                        <XAxis dataKey="name" stroke="#888" />
-                        <YAxis stroke="#888" />
-                        <Tooltip contentStyle={{ backgroundColor: '#161B22', border: '1px solid #30363D' }} />
-                        <Area type="monotone" dataKey="profit" stroke="#00A9FF" strokeWidth={2} fillOpacity={1} fill="url(#colorProfit)" />
-                    </AreaChart>
-                </ResponsiveContainer>
+    return (
+        <div className="space-y-6 animate-fade-in">
+            {/* Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <MetricCard title="Total Revenue" value={totalRevenue} icon={<TrendingUpIcon />} currency="UGX" />
+                <MetricCard title="Total Expenses" value={totalExpenses} icon={<TrendingDownIcon />} currency="UGX" />
+                <MetricCard title="Net Profit" value={netProfit} icon={<CashIcon />} currency="UGX" />
+                <MetricCard title="Total Stock Value" value={totalStockValue} icon={<ArchiveIcon />} currency="UGX" />
+                <MetricCard title="Outstanding Debt" value={totalDebt} icon={<ExclamationCircleIcon />} currency="UGX" />
+                <MetricCard title="Credit to Customers" value={totalCreditExtended} icon={<UsersIcon />} currency="UGX" />
             </div>
-        </Card>
 
-        <Card>
-          <h2 className="font-bold text-lg mb-4 text-white">Customers with Debt</h2>
-          <ul className="space-y-3">
-            {stats.customersWithDebt.slice(0, 4).map(c => (
-              <li key={c.id} className="flex justify-between items-center text-sm">
-                <span>{c.name}</span>
-                <span className="font-mono text-red-400">UGX {c.debt.toFixed(0)}</span>
-              </li>
-            ))}
-          </ul>
-           {stats.customersWithDebt.length > 4 && (
-            <button onClick={() => setActivePage('Customers' as Page)} className="text-sm text-glow-cyan mt-4 block text-left w-full hover:underline">
-              View All Customers
-            </button>
-           )}
-        </Card>
-      </div>
+            {/* Quick Actions & Info */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                    <div className="flex justify-between items-center mb-2">
+                        <h2 className="font-bold text-lg text-white">Low Stock Items ({lowStockItems.length})</h2>
+                        <Button variant="secondary" className="text-sm py-1 px-3" onClick={() => setActivePage(Page.Stock)}>View Stock</Button>
+                    </div>
+                    {lowStockItems.length > 0 ? (
+                        <ul className="space-y-2 text-sm">
+                            {lowStockItems.slice(0, 3).map(item => (
+                                <li key={item.id} className="flex justify-between p-2 rounded bg-dark-bg/50">
+                                    <span>{item.name}</span>
+                                    <span className="font-mono text-red-400">{item.quantity} left</span>
+                                </li>
+                            ))}
+                            {lowStockItems.length > 3 && <li className="text-center text-gray-400">...and {lowStockItems.length - 3} more</li>}
+                        </ul>
+                    ) : <p className="text-gray-400 text-sm">No items are running low on stock.</p>}
+                </Card>
 
-       <div className="grid grid-cols-1 gap-6">
-         <Card>
-          <h2 className="font-bold text-lg mb-4 text-white">Pending Tasks</h2>
-          <ul className="space-y-3">
-            {tasks.filter(t => t.status !== 'Completed').slice(0,3).map(task => (
-              <li key={task.id} className="flex items-start space-x-3 text-sm">
-                <ClipboardListIcon />
-                <span>{task.title}</span>
-              </li>
-            ))}
-          </ul>
-          <button onClick={() => setActivePage('Tasks' as Page)} className="text-sm text-glow-cyan mt-4 block text-left w-full hover:underline">
-            View All Tasks
-          </button>
-        </Card>
-      </div>
-    </div>
-  );
+                <Card>
+                     <div className="flex justify-between items-center mb-2">
+                        <h2 className="font-bold text-lg text-white">Pending Tasks ({pendingTasks.length})</h2>
+                        <Button variant="secondary" className="text-sm py-1 px-3" onClick={() => setActivePage(Page.Tasks)}>View Tasks</Button>
+                    </div>
+                     {pendingTasks.length > 0 ? (
+                        <ul className="space-y-2 text-sm">
+                            {pendingTasks.slice(0, 3).map(task => (
+                                <li key={task.id} className="p-2 rounded bg-dark-bg/50">
+                                    <p>{task.title}</p>
+                                    <p className="text-xs text-gray-400">Due: {task.dueDate}</p>
+                                </li>
+                            ))}
+                             {pendingTasks.length > 3 && <li className="text-center text-gray-400">...and {pendingTasks.length - 3} more</li>}
+                        </ul>
+                    ) : <p className="text-gray-400 text-sm">All tasks are completed!</p>}
+                </Card>
+            </div>
+        </div>
+    );
 };
 
 export default Dashboard;

@@ -22,8 +22,12 @@ const Finance: React.FC = () => {
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
-      if (name === 'amount' && value && !/^\d*$/.test(value)) return;
-      setFormState(prev => ({...prev, [name]: value }));
+      if (name === 'amount') {
+          const numericValue = value.replace(/\D/g, '');
+          setFormState(prev => ({...prev, [name]: numericValue }));
+      } else {
+          setFormState(prev => ({...prev, [name]: value }));
+      }
   };
   
   const handleAddTransaction = (e: React.FormEvent) => {

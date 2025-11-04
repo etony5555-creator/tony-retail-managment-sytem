@@ -54,24 +54,34 @@ const Stock: React.FC = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {stock.map(item => (
-                        <tr key={item.id} className="border-b border-dark-border hover:bg-dark-border/50 transition-colors">
-                            <td className="p-3 font-medium text-white">{item.name}</td>
-                            <td className="p-3 text-right font-mono">{item.quantity}</td>
-                            <td className="p-3 text-right font-mono">{formatCurrency(item.price)}</td>
-                            <td className="p-3">
-                                {item.quantity <= item.lowStockThreshold ? (
-                                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-600 bg-red-200/70">
-                                        Low Stock
-                                    </span>
-                                ) : (
-                                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200/70">
-                                        In Stock
-                                    </span>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
+                    {stock.map(item => {
+                        const isLowStock = item.quantity <= item.lowStockThreshold;
+                        return (
+                            <tr 
+                                key={item.id} 
+                                className={`border-b border-dark-border transition-colors ${
+                                    isLowStock 
+                                    ? 'bg-red-500/10 hover:bg-red-500/20' 
+                                    : 'hover:bg-dark-border/50'
+                                }`}
+                            >
+                                <td className="p-3 font-medium text-white">{item.name}</td>
+                                <td className={`p-3 text-right font-mono ${isLowStock ? 'text-red-300 font-extrabold animate-pulse' : ''}`}>{item.quantity}</td>
+                                <td className="p-3 text-right font-mono">{formatCurrency(item.price)}</td>
+                                <td className="p-3">
+                                    {isLowStock ? (
+                                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-red-100 bg-red-600/80 shadow-md shadow-red-500/50">
+                                            Low Stock
+                                        </span>
+                                    ) : (
+                                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-green-600 bg-green-200/70">
+                                            In Stock
+                                        </span>
+                                    )}
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

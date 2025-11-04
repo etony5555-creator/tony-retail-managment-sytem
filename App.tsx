@@ -13,6 +13,7 @@ import { Page } from './types';
 
 const App: React.FC = () => {
   const [activePage, setActivePage] = useState<Page>(Page.Home);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const renderPage = () => {
     switch (activePage) {
@@ -39,9 +40,21 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-dark-bg text-gray-800 dark:text-gray-200 font-sans">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      <Sidebar 
+        activePage={activePage} 
+        setActivePage={setActivePage} 
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
+      />
+       {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        ></div>
+      )}
       <main className="flex-1 flex flex-col overflow-hidden">
-        <Header title={activePage} />
+        <Header title={activePage} onMenuClick={() => setIsSidebarOpen(true)} />
         <div className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8">
           {renderPage()}
         </div>

@@ -1,10 +1,10 @@
-
 import React, { useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import type { AppContextType } from '../types';
 
 interface HeaderProps {
   title: string;
+  onMenuClick: () => void;
 }
 
 const SunIcon = () => (
@@ -19,13 +19,24 @@ const MoonIcon = () => (
     </svg>
 );
 
+const MenuIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+);
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+
+const Header: React.FC<HeaderProps> = ({ title, onMenuClick }) => {
   const { darkMode, toggleDarkMode } = useContext(AppContext) as AppContextType;
 
   return (
     <header className="bg-white/50 dark:bg-dark-card/70 backdrop-blur-sm border-b border-gray-200 dark:border-dark-border p-4 flex justify-between items-center shadow-md flex-shrink-0">
-      <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">{title}</h1>
+      <div className="flex items-center gap-4">
+        <button onClick={onMenuClick} className="md:hidden text-gray-800 dark:text-white">
+            <MenuIcon />
+        </button>
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">{title}</h1>
+      </div>
       <button
         onClick={toggleDarkMode}
         className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-dark-border focus:outline-none focus:ring-2 focus:ring-glow-cyan"

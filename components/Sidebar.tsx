@@ -1,4 +1,3 @@
-
 import React, { useContext } from 'react';
 import { Page } from '../types';
 import { AppContext } from '../context/AppContext';
@@ -29,13 +28,20 @@ const navItems = [
 interface SidebarProps {
   activePage: Page;
   setActivePage: (page: Page) => void;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, isOpen, setIsOpen }) => {
   const { shopName, logo } = useContext(AppContext) as AppContextType;
 
+  const handleNavClick = (page: Page) => {
+    setActivePage(page);
+    setIsOpen(false);
+  };
+
   return (
-    <aside className="w-64 bg-white/30 dark:bg-dark-card/50 backdrop-blur-lg border-r border-gray-200 dark:border-dark-border flex-col p-4 space-y-4 transition-all duration-300 hidden md:flex">
+    <aside className={`w-64 bg-white/30 dark:bg-dark-card/50 backdrop-blur-lg border-r border-gray-200 dark:border-dark-border flex flex-col p-4 space-y-4 transition-transform duration-300 ease-in-out md:translate-x-0 md:relative fixed inset-y-0 left-0 z-40 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       <div className="flex items-center space-x-3 p-2">
         <div className="w-12 h-12 rounded-full bg-dark-bg border-2 border-dark-border flex items-center justify-center overflow-hidden flex-shrink-0">
             {logo ? (
@@ -51,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage }) => {
           {navItems.map(item => (
             <li key={item.page}>
               <button
-                onClick={() => setActivePage(item.page)}
+                onClick={() => handleNavClick(item.page)}
                 className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-all duration-200 ${
                   activePage === item.page
                     ? 'bg-glow-cyan/80 text-white shadow-lg'

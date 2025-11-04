@@ -1,7 +1,6 @@
-
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { AppContext } from '../context/AppContext';
-import type { AppContextType, BusinessInsight } from '../types';
+import type { AppContextType, BusinessInsight, Page } from '../types';
 import Card from './common/Card';
 import MetricCard from './common/MetricCard';
 import { getBusinessInsights } from '../services/geminiService';
@@ -15,8 +14,11 @@ const UserGroupIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h
 const ClipboardListIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>;
 const LightBulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>;
 
+interface DashboardProps {
+  setActivePage: (page: Page) => void;
+}
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC<DashboardProps> = ({ setActivePage }) => {
   const { customers, transactions, tasks, stock } = useContext(AppContext) as AppContextType;
   const [insights, setInsights] = useState<BusinessInsight[]>([]);
   const [loadingInsights, setLoadingInsights] = useState(false);
@@ -93,7 +95,11 @@ const Dashboard: React.FC = () => {
               </li>
             ))}
           </ul>
-           {stats.customersWithDebt.length > 4 && <a href="#" className="text-sm text-glow-cyan mt-4 block">View All Customers</a>}
+           {stats.customersWithDebt.length > 4 && (
+            <button onClick={() => setActivePage('Customers' as Page)} className="text-sm text-glow-cyan mt-4 block text-left w-full hover:underline">
+              View All Customers
+            </button>
+           )}
         </Card>
       </div>
 
@@ -122,14 +128,16 @@ const Dashboard: React.FC = () => {
          <Card>
           <h2 className="font-bold text-lg mb-4 text-white">Pending Tasks</h2>
           <ul className="space-y-3">
-            {tasks.filter(t => !t.completed).map(task => (
+            {tasks.filter(t => !t.completed).slice(0,3).map(task => (
               <li key={task.id} className="flex items-start space-x-3 text-sm">
                 <ClipboardListIcon />
                 <span>{task.title}</span>
               </li>
             ))}
           </ul>
-          <a href="#" className="text-sm text-glow-cyan mt-4 block">View All Tasks</a>
+          <button onClick={() => setActivePage('Tasks' as Page)} className="text-sm text-glow-cyan mt-4 block text-left w-full hover:underline">
+            View All Tasks
+          </button>
         </Card>
       </div>
     </div>

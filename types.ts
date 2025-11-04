@@ -1,4 +1,3 @@
-
 export enum Page {
   Home = 'Dashboard',
   Customers = 'Customers',
@@ -7,6 +6,7 @@ export enum Page {
   Borrow = 'Borrow',
   Wholesalers = 'Wholesalers',
   BodaDrivers = 'Boda Drivers',
+  Tasks = 'Tasks',
   Settings = 'Settings',
 }
 
@@ -64,6 +64,16 @@ export interface BusinessInsight {
   suggestion: string;
 }
 
+export interface BorrowRecord {
+  id: number;
+  lender: string;
+  amount: number;
+  date: string;
+  dueDate: string;
+  status: 'Paid' | 'Unpaid';
+}
+
+
 export interface AppContextType {
   customers: Customer[];
   stock: StockItem[];
@@ -71,12 +81,18 @@ export interface AppContextType {
   tasks: Task[];
   wholesalers: Wholesaler[];
   bodaDrivers: BodaDriver[];
+  borrows: BorrowRecord[];
   shopName: string;
   logo: string | null;
   darkMode: boolean;
   addCustomer: (customer: Omit<Customer, 'id' | 'debt' | 'lastSeen'>) => void;
   addStockItem: (item: Omit<StockItem, 'id'>) => void;
   addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
+  addWholesaler: (wholesaler: Omit<Wholesaler, 'id'>) => void;
+  addBodaDriver: (driver: Omit<BodaDriver, 'id' | 'available'>) => void;
+  addBorrow: (borrow: Omit<BorrowRecord, 'id' | 'status'>) => void;
+  addTask: (task: Omit<Task, 'id' | 'completed'>) => void;
+  toggleTask: (taskId: number) => void;
   setShopName: (name: string) => void;
   setLogo: (logo: string | null) => void;
   toggleDarkMode: () => void;

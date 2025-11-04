@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import type { Customer, StockItem, Transaction, Task, Wholesaler, BodaDriver } from '../types';
+import type { Customer, StockItem, Transaction, Task, Wholesaler, BodaDriver, BorrowRecord } from '../types';
 import { TransactionType } from '../types';
 
 const useMockData = () => {
@@ -41,8 +40,14 @@ const useMockData = () => {
     { id: 1, name: 'James', phone: '075-111-2222', available: true },
     { id: 2, name: 'Peter', phone: '079-333-4444', available: false },
   ]);
+
+  const [borrows] = useState<BorrowRecord[]>([
+    { id: 1, lender: 'Kampala General Supplies', amount: 500000, date: '2024-07-10', dueDate: '2024-08-10', status: 'Unpaid' },
+    { id: 2, lender: 'Equity Bank', amount: 2000000, date: '2024-06-01', dueDate: '2024-12-01', status: 'Unpaid' },
+    { id: 3, lender: 'Bakers Choice Ltd', amount: 250000, date: '2024-07-15', dueDate: '2024-07-25', status: 'Paid' },
+  ]);
   
-  return { customers, stock, transactions, tasks, wholesalers, bodaDrivers };
+  return { customers, stock, transactions, tasks, wholesalers, bodaDrivers, borrows };
 };
 
 export default useMockData;

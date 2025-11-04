@@ -9,6 +9,7 @@ import Header from './components/Header';
 import Borrow from './components/Borrow';
 import Wholesalers from './components/Wholesalers';
 import BodaDrivers from './components/BodaDrivers';
+import Tasks from './components/Tasks';
 import { Page } from './types';
 
 const App: React.FC = () => {
@@ -18,7 +19,7 @@ const App: React.FC = () => {
   const renderPage = () => {
     switch (activePage) {
       case Page.Home:
-        return <Dashboard />;
+        return <Dashboard setActivePage={setActivePage} />;
       case Page.Customers:
         return <Customers />;
       case Page.Stock:
@@ -31,10 +32,12 @@ const App: React.FC = () => {
         return <Wholesalers />;
       case Page.BodaDrivers:
         return <BodaDrivers />;
+      case Page.Tasks:
+        return <Tasks />;
       case Page.Settings:
         return <Settings />;
       default:
-        return <Dashboard />;
+        return <Dashboard setActivePage={setActivePage} />;
     }
   };
 

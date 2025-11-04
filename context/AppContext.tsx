@@ -1,7 +1,6 @@
-
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import useMockData from '../hooks/useMockData';
-import type { AppContextType, Customer, StockItem, Transaction } from '../types';
+import type { AppContextType, Customer, StockItem, Transaction, Wholesaler, BodaDriver, BorrowRecord, Task } from '../types';
 
 export const AppContext = createContext<AppContextType | null>(null);
 
@@ -14,6 +13,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [customers, setCustomers] = useState<Customer[]>(mockData.customers);
   const [stock, setStock] = useState<StockItem[]>(mockData.stock);
   const [transactions, setTransactions] = useState<Transaction[]>(mockData.transactions);
+  const [wholesalers, setWholesalers] = useState<Wholesaler[]>(mockData.wholesalers);
+  const [bodaDrivers, setBodaDrivers] = useState<BodaDriver[]>(mockData.bodaDrivers);
+  const [borrows, setBorrows] = useState<BorrowRecord[]>(mockData.borrows);
+  const [tasks, setTasks] = useState<Task[]>(mockData.tasks);
   const [shopName, setShopName] = useState<string>('My Shop');
   const [logo, setLogo] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState(true);
@@ -52,19 +55,70 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setTransactions(prev => [...prev, newTransaction]);
   };
 
+  const addWholesaler = (wholesalerData: Omit<Wholesaler, 'id'>) => {
+    const newWholesaler: Wholesaler = {
+      id: Math.max(...wholesalers.map(w => w.id), 0) + 1,
+      ...wholesalerData,
+    };
+    setWholesalers(prev => [...prev, newWholesaler]);
+  };
+
+  const addBodaDriver = (driverData: Omit<BodaDriver, 'id' | 'available'>) => {
+    const newDriver: BodaDriver = {
+      id: Math.max(...bodaDrivers.map(d => d.id), 0) + 1,
+      ...driverData,
+      available: true,
+    };
+    setBodaDrivers(prev => [...prev, newDriver]);
+  };
+  
+  const addBorrow = (borrowData: Omit<BorrowRecord, 'id' | 'status'>) => {
+    const newBorrow: BorrowRecord = {
+      id: Math.max(...borrows.map(b => b.id), 0) + 1,
+      ...borrowData,
+      status: 'Unpaid',
+    };
+    setBorrows(prev => [...prev, newBorrow]);
+  };
+
+  const addTask = (taskData: Omit<Task, 'id' | 'completed'>) => {
+    const newTask: Task = {
+      id: Math.max(...tasks.map(t => t.id), 0) + 1,
+      ...taskData,
+      completed: false,
+    };
+    setTasks(prev => [...prev, newTask]);
+  };
+
+  const toggleTask = (taskId: number) => {
+    setTasks(prev =>
+      prev.map(task =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
   const toggleDarkMode = () => setDarkMode(prev => !prev);
   
   const value: AppContextType = {
-    ...mockData,
     customers,
     stock,
     transactions,
+    tasks,
+    wholesalers,
+    bodaDrivers,
+    borrows,
     shopName,
     logo,
     darkMode,
     addCustomer,
     addStockItem,
     addTransaction,
+    addWholesaler,
+    addBodaDriver,
+    addBorrow,
+    addTask,
+    toggleTask,
     setShopName,
     setLogo,
     toggleDarkMode,

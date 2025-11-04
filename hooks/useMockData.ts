@@ -11,10 +11,10 @@ const initialCustomers: Customer[] = [
 ];
 
 const initialStock: StockItem[] = [
-  { id: generateId(), name: 'Sugar', quantity: 50, price: 4000, lowStockThreshold: 10 },
-  { id: generateId(), name: 'Soap', quantity: 100, price: 2500, lowStockThreshold: 20 },
-  { id: generateId(), name: 'Cooking Oil', quantity: 5, price: 8000, lowStockThreshold: 5 },
-  { id: generateId(), name: 'Rice', quantity: 25, price: 5000, lowStockThreshold: 10 },
+  { id: generateId(), name: 'Sugar', category: 'Groceries', quantity: 50, price: 4000, lowStockThreshold: 10 },
+  { id: generateId(), name: 'Soap', category: 'Toiletries', quantity: 100, price: 2500, lowStockThreshold: 20 },
+  { id: generateId(), name: 'Cooking Oil', category: 'Pantry', quantity: 5, price: 8000, lowStockThreshold: 5 },
+  { id: generateId(), name: 'Rice', category: 'Groceries', quantity: 25, price: 5000, lowStockThreshold: 10 },
 ];
 
 const initialTransactions: Transaction[] = [

@@ -67,6 +67,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateCustomer = (updatedCustomer: Customer) => setCustomers(prev => prev.map(c => c.id === updatedCustomer.id ? updatedCustomer : c));
   const addStockItem = (item: Omit<StockItem, 'id'>) => setStock(prev => [...prev, { ...item, id: generateId() }]);
   const updateStockItem = (updatedItem: StockItem) => setStock(prev => prev.map(item => item.id === updatedItem.id ? updatedItem : item));
+  const deleteStockItem = (id: string) => setStock(prev => prev.filter(item => item.id !== id));
   const addTransaction = (transaction: Omit<Transaction, 'id'>) => setTransactions(prev => [...prev, { ...transaction, id: generateId() }]);
   const addBorrow = (borrow: Omit<BorrowRecord, 'id' | 'amountPaid' | 'status'>) => setBorrows(prev => [...prev, { ...borrow, id: generateId(), amountPaid: 0, status: 'Unpaid' }]);
   const updateBorrow = (updatedBorrow: BorrowRecord) => {
@@ -103,7 +104,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     theme, setTheme,
     totalRevenue, totalExpenses, netProfit, totalStockValue, totalDebt, totalCreditExtended,
     addCustomer, updateCustomer,
-    addStockItem, updateStockItem,
+    addStockItem, updateStockItem, deleteStockItem,
     addTransaction,
     addBorrow, updateBorrow,
     addWholesaler, updateWholesaler,

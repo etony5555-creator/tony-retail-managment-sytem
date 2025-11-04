@@ -32,6 +32,7 @@ export interface Customer {
 export interface StockItem {
     id: string;
     name: string;
+    category: string;
     quantity: number;
     price: number;
     lowStockThreshold: number;
@@ -94,7 +95,14 @@ export const themes: Theme[] = [
   { id: 'sunset', name: 'Sunset Orange', colors: { '--color-dark-bg': '22 68% 8%', '--color-dark-card': '22 68% 12%', '--color-dark-border': '22 68% 20%', '--color-glow-cyan': '30 100% 55%' }},
   { id: 'galaxy', name: 'Galaxy Purple', colors: { '--color-dark-bg': '265 68% 8%', '--color-dark-card': '265 68% 12%', '--color-dark-border': '265 68% 20%', '--color-glow-cyan': '250 100% 65%' }},
   { id: 'emerald', name: 'Emerald Green', colors: { '--color-dark-bg': '150 68% 8%', '--color-dark-card': '150 68% 12%', '--color-dark-border': '150 68% 20%', '--color-glow-cyan': '140 100% 55%' }},
+  { id: 'crimson', name: 'Crimson Night', colors: { '--color-dark-bg': '0 70% 8%', '--color-dark-card': '0 70% 12%', '--color-dark-border': '0 70% 20%', '--color-glow-cyan': '0 100% 60%' }},
+  { id: 'jungle', name: 'Neon Jungle', colors: { '--color-dark-bg': '100 50% 8%', '--color-dark-card': '100 50% 12%', '--color-dark-border': '100 50% 20%', '--color-glow-cyan': '110 100% 55%' }},
+  { id: 'arctic', name: 'Arctic Haze', colors: { '--color-dark-bg': '200 50% 8%', '--color-dark-card': '200 50% 12%', '--color-dark-border': '200 50% 20%', '--color-glow-cyan': '190 100% 70%' }},
+  { id: 'solar', name: 'Solar Flare', colors: { '--color-dark-bg': '45 80% 8%', '--color-dark-card': '45 80% 12%', '--color-dark-border': '45 80% 20%', '--color-glow-cyan': '50 100% 55%' }},
+  { id: 'ocean', name: 'Cosmic Ocean', colors: { '--color-dark-bg': '240 60% 8%', '--color-dark-card': '240 60% 12%', '--color-dark-border': '240 60% 20%', '--color-glow-cyan': '220 100% 65%' }},
+  { id: 'gilded', name: 'Gilded Onyx', colors: { '--color-dark-bg': '45 10% 8%', '--color-dark-card': '45 10% 12%', '--color-dark-border': '45 10% 20%', '--color-glow-cyan': '45 85% 60%' }},
 ];
+
 
 export interface AppContextType {
     // State
@@ -136,6 +144,7 @@ export interface AppContextType {
     updateCustomer: (customer: Customer) => void;
     addStockItem: (item: Omit<StockItem, 'id'>) => void;
     updateStockItem: (item: StockItem) => void;
+    deleteStockItem: (id: string) => void;
     addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
     addBorrow: (borrow: Omit<BorrowRecord, 'id' | 'amountPaid' | 'status'>) => void;
     updateBorrow: (borrow: BorrowRecord) => void;
